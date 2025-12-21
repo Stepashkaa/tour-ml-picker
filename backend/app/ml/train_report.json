@@ -1,0 +1,31 @@
+{
+  "timestamp_utc": "2025-12-21T18:54:03.401680Z",
+  "samples_total": 506,
+  "train_samples": 379,
+  "test_samples": 127,
+  "labels": {
+    "count_0": 404,
+    "count_1": 102
+  },
+  "metrics": {
+    "roc_auc": 0.8657654226961158,
+    "pr_auc": 0.6182351475944912,
+    "logloss": 0.5160759036777205,
+    "accuracy": 0.7322834645669292,
+    "precision": 0.43103448275862066,
+    "recall": 0.9615384615384616,
+    "f1": 0.5952380952380952,
+    "confusion_matrix": [
+      [
+        68,
+        33
+      ],
+      [
+        1,
+        25
+      ]
+    ],
+    "threshold": 0.5
+  },
+  "notes": "BOOK=1, VIEW=0. Features: tour fields + (max_price,duration_filter placeholders=0)."
+}
