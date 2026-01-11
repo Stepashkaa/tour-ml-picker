@@ -27,11 +27,11 @@ SEED_TOURS = [
          description="Прага: старый город, мосты, замки."),
 ]
 
-
+# проверка есть ли у нас туры
 def seed_tours_if_empty(db: Session) -> None:
     if db.query(Tour).count() > 0:
         return
 
     for t in SEED_TOURS:
-        db.add(Tour(**t))
+        db.add(Tour(**t)) # добавление туров
     db.commit()

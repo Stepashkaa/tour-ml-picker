@@ -12,6 +12,7 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 @router.post("/register", response_model=UserResponse)
 def register(req: RegisterRequest, db: Session = Depends(get_db)):
+    # проверка email пользователя
     exists = db.query(User).filter(User.email == req.email.lower()).first()
     if exists:
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -29,7 +30,7 @@ def register(req: RegisterRequest, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=TokenResponse)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    # Swagger OAuth2 Password Flow передаёт email в поле username
+    # получение email и пароля
     email = form_data.username.lower()
     password = form_data.password
 

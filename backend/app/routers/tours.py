@@ -14,7 +14,7 @@ router = APIRouter(prefix="/api/tours", tags=["tours"])
 
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "..", "ml", "model.joblib")
 
-
+# Ручная формула подсчёта score
 def _simple_fallback_score(t: Tour, req: TourSearchRequest) -> float:
     s = 0.0
     s += float(t.rating) * 2.0
@@ -33,13 +33,14 @@ def _simple_fallback_score(t: Tour, req: TourSearchRequest) -> float:
 
     return s
 
+# загружаем модель
 def _load_model():
     if os.path.exists(MODEL_PATH):
         return joblib.load(MODEL_PATH)  # Pipeline
     return None
 
+# строка с признаками
 def _build_row_for_predict(t: Tour, req: TourSearchRequest) -> dict:
-    # ДОЛЖНО совпадать с _build_row в ml.py
     return {
         "city": t.city,
         "season": t.season,
@@ -66,30 +67,32 @@ def search_tours(req: TourSearchRequest, db: Session = Depends(get_db), user: Us
     q = db.query(Tour).filter(Tour.city == req.city)
 
     if req.max_price is not None:
-        q = q.filter(Tour.price <= req.max_price)
+        q = q.filter(Tour.price <= req.max_price) # дорогие убираем
 
     if req.duration_days is not None:
-        q = q.filter(Tour.duration_days.between(req.duration_days - 2, req.duration_days + 2))
+        q = q.filter(Tour.duration_days.between(req.duration_days - 2, req.duration_days + 2)) # количество дней
 
     if req.season:
         q = q.filter((Tour.season == req.season) | (Tour.season == "all"))
 
-    tours = q.all()
+    tours = q.all() # получаем список туров
 
     model = _load_model()
 
+    # Выбор ранжирования: ML или fallback
     scored = []
     if model is None:
         for t in tours:
             scored.append((t, _simple_fallback_score(t, req)))
     else:
-        rows = [_build_row_for_predict(t, req) for t in tours]
+        rows = [_build_row_for_predict(t, req) for t in tours] # признаки объединяем в строку
         if len(rows) > 0:
-            df = pd.DataFrame(rows)
+            df = pd.DataFrame(rows) # передаём для получения ml_score
             proba = model.predict_proba(df)[:, 1].tolist()
             for t, s in zip(tours, proba):
                 scored.append((t, float(s)))
 
+    # сортируем по вероятности брони тура
     scored.sort(key=lambda x: x[1], reverse=True)
     top = scored[: req.limit]
 

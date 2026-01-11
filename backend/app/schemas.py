@@ -3,7 +3,7 @@ from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, List
 
 
-# ---------- Auth ----------
+# Auth
 class RegisterRequest(BaseModel):
     email: EmailStr
     name: str = Field(min_length=1, max_length=120)
@@ -25,7 +25,7 @@ class UserResponse(BaseModel):
         from_attributes = True
 
 
-# ---------- Tours ----------
+# Tours
 class TourResponse(BaseModel):
     id: int
     city: str
@@ -51,12 +51,12 @@ class TourSearchRequest(BaseModel):
     limit: int = Field(default=20, ge=1, le=100)
 
 
-# ---------- Events ----------
+# Events
 class ViewEventRequest(BaseModel):
     tour_id: int
 
 
-# ---------- Bookings ----------
+# Bookings
 class CreateBookingRequest(BaseModel):
     tour_id: int
 

@@ -9,7 +9,7 @@ from ..security import hash_password
 
 router = APIRouter(prefix="/api/dev", tags=["dev"])
 
-
+# наполнение БД данными
 @router.post("/seed")
 def seed_demo_data(
     users_count: int = 5,
@@ -19,6 +19,7 @@ def seed_demo_data(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ):
+    # списки для туров
     cities = ["Rome", "Paris", "Barcelona", "Prague", "Vienna", "Berlin"]
     seasons = ["summer", "winter", "all"]
     types = ["relax", "excursion", "beach"]
@@ -26,6 +27,7 @@ def seed_demo_data(
     existing_tours = db.query(Tour).count()
     to_create = max(0, tours_count - existing_tours)
 
+    # создание туров
     for _ in range(to_create):
         city = random.choice(cities)
         tour_type = random.choice(types)
@@ -37,6 +39,7 @@ def seed_demo_data(
 
         desc = f"{city} • {tour_type} • {duration} дней • {season}"
 
+        # добавление тура в БД
         db.add(Tour(
             city=city,
             price=price,
@@ -52,6 +55,7 @@ def seed_demo_data(
     if not tours:
         raise HTTPException(status_code=400, detail="No tours available for seeding")
 
+    # создание пользователей
     created_users = []
     for i in range(users_count):
         email = f"demo{i+1}@mail.com"
@@ -63,10 +67,10 @@ def seed_demo_data(
             db.refresh(u)
         created_users.append(u)
 
-    # Генерим историю: у каждого пользователя есть "предпочтения"
+    # создание для каждого пользователя историю просмотров и бронирований
     for u in created_users:
-        fav_city = random.choice(cities)
-        fav_type = random.choice(types)
+        fav_city = random.choice(cities) # любимый город
+        fav_type = random.choice(types) # любимый тип
 
         # VIEW — чаще смотрит то, что похоже на предпочтения
         for _ in range(views_per_user):

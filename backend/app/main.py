@@ -10,7 +10,7 @@ from .routers import auth, tours, bookings, events, ml
 
 app = FastAPI(title="Tour ML Picker Backend", version="1.0")
 
-# CORS для React (Vite)
+# связь с фронтом
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
@@ -21,17 +21,17 @@ app.add_middleware(
 
 app.include_router(dev_seed.router)
 
-# init DB
+# инициализация БД
 Base.metadata.create_all(bind=engine)
 
-# seed tours
+# заполняем турами
 db: Session = SessionLocal()
 try:
     seed_tours_if_empty(db)
 finally:
     db.close()
 
-# routers
+# основные события от просмотра туров до обучения
 app.include_router(auth.router)
 app.include_router(tours.router)
 app.include_router(bookings.router)

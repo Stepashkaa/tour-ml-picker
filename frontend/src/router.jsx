@@ -5,6 +5,7 @@ import Tours from "./pages/Tours";
 import TourDetails from "./pages/TourDetails";
 import MyBookings from "./pages/MyBookings";
 import ProtectedRoute from "./components/ProtectedRoute";
+import MlReport from "./pages/MlReport";
 
 export const router = createBrowserRouter([
   { path: "/login", element: <Login /> },
@@ -31,6 +32,15 @@ export const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <MyBookings />
+      </ProtectedRoute>
+    ),
+  },
+
+   {
+    path: "/ml",
+    element: (
+      <ProtectedRoute>
+        <MlReport />
       </ProtectedRoute>
     ),
   },

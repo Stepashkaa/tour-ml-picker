@@ -96,6 +96,8 @@ export default function Tours() {
           <Link className="btn btn-ghost" to="/bookings">Мои бронирования</Link>
           <button className="btn" onClick={onLogout}>Выйти</button>
         </div>
+
+        <Link className="btn btn-ghost" to="/ml">ML Report</Link>
       </div>
 
       <div className="card">
@@ -140,13 +142,6 @@ export default function Tours() {
               <option value="winter">winter</option>
               <option value="all">all</option>
             </select>
-          </div>
-
-          <div>
-            <label>Подсказка</label>
-            <div className="small">
-              Сначала можно нажать <b>Seed</b>, затем <b>Train ML</b>, и выдача начнёт ранжироваться моделью.
-            </div>
           </div>
         </div>
 
