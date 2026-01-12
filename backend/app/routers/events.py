@@ -10,7 +10,8 @@ router = APIRouter(prefix="/api/events", tags=["events"])
 
 @router.post("/view")
 def log_view(req: ViewEventRequest, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    ev = Event(user_id=user.id, tour_id=req.tour_id, event_type="VIEW")
+    # сохраняем в событие поиск
+    ev = Event(user_id=user.id, tour_id=req.tour_id, search_id=req.search_id, event_type="VIEW")
     db.add(ev)
     db.commit()
     return {"status": "ok"}

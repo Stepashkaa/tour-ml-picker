@@ -20,7 +20,7 @@ def create_booking(req: CreateBookingRequest, db: Session = Depends(get_db), use
     db.add(booking)
 
     # логируем BOOK событие для ML
-    ev = Event(user_id=user.id, tour_id=tour.id, event_type="BOOK")
+    ev = Event(user_id=user.id, tour_id=tour.id, search_id=req.search_id, event_type="BOOK")
     db.add(ev)
 
     db.commit()

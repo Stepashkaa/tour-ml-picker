@@ -52,13 +52,19 @@ class TourSearchRequest(BaseModel):
 
 
 # Events
+class TourSearchResponse(BaseModel):
+    search_id: int
+    items: List["TourResponse"]  # forward ref
+
 class ViewEventRequest(BaseModel):
     tour_id: int
+    search_id: Optional[int] = None 
 
 
 # Bookings
 class CreateBookingRequest(BaseModel):
     tour_id: int
+    search_id: Optional[int] = None
 
 
 class BookingResponse(BaseModel):
@@ -69,3 +75,6 @@ class BookingResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+TourSearchResponse.model_rebuild()
+TourResponse.model_rebuild()

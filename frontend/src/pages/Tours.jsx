@@ -36,7 +36,8 @@ export default function Tours() {
         limit: 20,
       };
       const res = await api.post("/api/tours/search", payload);
-      setItems(res.data);
+      setItems(res.data.items);
+      localStorage.setItem("last_search_id", String(res.data.search_id));
     } catch (err) {
       setError(err?.response?.data?.detail || "Search failed");
     } finally {

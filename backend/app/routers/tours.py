@@ -7,8 +7,8 @@ import numpy as np
 import pandas as pd
 
 from ..deps import get_db, get_current_user
-from ..models import Tour, User
-from ..schemas import TourResponse, TourSearchRequest
+from ..models import Tour, User, UserSearch
+from ..schemas import TourResponse, TourSearchRequest, TourSearchResponse
 
 router = APIRouter(prefix="/api/tours", tags=["tours"])
 
@@ -62,8 +62,21 @@ def get_tour(tour_id: int, db: Session = Depends(get_db), user: User = Depends(g
     return TourResponse.model_validate(t)
 
 
-@router.post("/search", response_model=List[TourResponse])
+@router.post("/search", response_model=TourSearchResponse)
 def search_tours(req: TourSearchRequest, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    # вытаскиваем поиск
+    search = UserSearch(
+        user_id=user.id,
+        city=req.city,
+        max_price=req.max_price,
+        duration_days=req.duration_days,
+        tour_type=req.tour_type,
+        season=req.season,
+    )
+    db.add(search)
+    db.commit()
+    db.refresh(search)
+
     q = db.query(Tour).filter(Tour.city == req.city)
 
     if req.max_price is not None:
@@ -102,4 +115,4 @@ def search_tours(req: TourSearchRequest, db: Session = Depends(get_db), user: Us
         dto.ml_score = float(s)
         out.append(dto)
 
-    return out
+    return TourSearchResponse(search_id=search.id, items=out)

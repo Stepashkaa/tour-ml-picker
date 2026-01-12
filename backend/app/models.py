@@ -17,6 +17,8 @@ class User(Base):
 
     bookings = relationship("Booking", back_populates="user")
 
+    searches = relationship("UserSearch", back_populates="user")
+
 
 class Tour(Base):
     __tablename__ = "tours"
@@ -49,6 +51,23 @@ class Booking(Base):
     tour = relationship("Tour")
 
 
+class UserSearch(Base):
+    __tablename__ = "user_searches"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)
+
+    city = Column(String, nullable=False)
+    max_price = Column(Integer, nullable=True)
+    duration_days = Column(Integer, nullable=True)
+    tour_type = Column(String, nullable=True)
+    season = Column(String, nullable=True)
+
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    user = relationship("User", back_populates="searches")
+    events = relationship("Event", back_populates="search")
+
 class Event(Base):
     __tablename__ = "events"
 
@@ -56,5 +75,9 @@ class Event(Base):
     user_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)
     tour_id = Column(Integer, ForeignKey("tours.id"), index=True, nullable=False)
 
+    search_id = Column(Integer, ForeignKey("user_searches.id"), index=True, nullable=True)
+
     event_type = Column(String, nullable=False)  # VIEW / BOOK
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    search = relationship("UserSearch", back_populates="events") 

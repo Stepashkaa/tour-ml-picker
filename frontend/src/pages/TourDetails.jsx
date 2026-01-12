@@ -18,7 +18,11 @@ export default function TourDetails() {
         setTour(res.data);
 
         // VIEW событие
-        await api.post("/api/events/view", { tour_id: parseInt(id) });
+        const searchId = localStorage.getItem("last_search_id");
+        await api.post("/api/events/view", {
+          tour_id: parseInt(id),
+          search_id: searchId ? parseInt(searchId) : null,
+        });
       } catch (err) {
         setError(err?.response?.data?.detail || "Load failed");
       }
@@ -30,7 +34,11 @@ export default function TourDetails() {
     setBookingLoading(true);
     setError(null);
     try {
-      await api.post("/api/bookings", { tour_id: parseInt(id) });
+      const searchId = localStorage.getItem("last_search_id");
+      await api.post("/api/bookings", {
+        tour_id: parseInt(id),
+        search_id: searchId ? parseInt(searchId) : null,
+      });
       nav("/bookings");
     } catch (err) {
       setError(err?.response?.data?.detail || "Booking failed");
